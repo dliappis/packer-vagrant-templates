@@ -14,15 +14,15 @@ Many thanks to [digital-wonderland](https://github.com/digital-wonderland) for h
 
 In general use:
 
-packer build --only=<hypervisor> packer-opensuse13-1.json
+`packer build --only=<hypervisor> packer-opensuse13-1.json`
 
 where <hypervisor> can be qemu or virtualbox-iso (vmware-fusion to be added soon).
 
-If you ommit --only it will try to build both in parallel which may not work as virtualbox and kvm doesn't play well while used simultaneously.
+If you omit --only it will try to build both in parallel which may not work as virtualbox and kvm doesn't play well while used simultaneously.
 
 You can override a number of user defined variables using -var such as the md5 checksum of the source iso or whether to use in headless mode.
 
-For example I have predownloaded the openSUSE-NET-13.1 iso and call packer like:
+For example I have predownloaded the `openSUSE-NET-13.1` iso and call packer like:
 
 ```bash
 packer build -var 'iso_url=openSUSE-13.1-NET-x86_64.iso' --only=virtualbox-iso packer-opensuse13.json
