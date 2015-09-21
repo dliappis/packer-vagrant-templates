@@ -28,6 +28,12 @@ For example I have predownloaded the openSUSE-NET-13.1 iso and call packer like:
 packer build -var 'iso_url=openSUSE-13.1-NET-x86_64.iso' --only=virtualbox-iso packer-opensuse13.json
 ```
 
+Or to disable headless mode:
+
+```bash
+packer build -var 'iso_url=openSUSE-13.1-NET-x86_64.iso' -var 'install_headless=false' --only=virtualbox-iso packer-opensuse13.json
+```
+
 # Output #
 
 Can be found under `output/`
