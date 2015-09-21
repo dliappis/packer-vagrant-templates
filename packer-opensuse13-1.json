@@ -1,0 +1,113 @@
+{
+  "variables": {
+    "opensuse_ver": "13.1",
+    "iso_url": "http://download.opensuse.org/distribution/13.1/iso/openSUSE-13.1-NET-x86_64.iso",
+    "iso_checksum": "6c0d656895cbd92f34de61d98ca364ea",
+    "iso_checksum_type": "md5",
+    "install_headless": "false",
+    "install_target": "/dev/vda",
+    "disk_size": "20480",
+    "memory": "1024",
+    "cpus": "2",
+    "user": "vagrant",
+    "password": "vagrant",
+    "autoyastfile_qemu": "autoinst_qemu.xml",
+    "autoyastfile_vbox": "autoinst_vbox.xml",
+    "atlas_token": "",
+    "atlas_username": ""
+  },
+  "builders":
+  [
+    {
+      "type": "qemu",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "headless": "{{user `install_headless`}}",
+      "http_directory": "http",
+      "disk_size": "{{user `disk_size`}}",
+      "format": "qcow2",
+      "accelerator": "kvm",
+      "qemuargs": [
+        [ "-m", "{{user `memory`}}" ]
+      ],
+      "boot_command":
+      [
+        "<esc><enter><wait>",
+        "linux netdevice=eth0 net.ifnames=0 netsetup=dhcp<wait>",
+        " install=http://download.opensuse.org/distribution/{{ user `opensuse_ver`}}/repo/oss/ insecure=1<wait>",
+        " lang=en_US autoyast=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `autoyastfile_qemu`}}<wait>",
+        " textmode=1<wait>",
+        "<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "40m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_key_path": "files/vagrant",
+      "shutdown_command": "echo '{{user `password`}}'|sudo -S /sbin/shutdown -P now",
+      "output_directory": "builds/opensuse13"
+    },
+    {
+      "type": "virtualbox-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "headless": "{{user `install_headless`}}",
+      "http_directory": "http",
+      "disk_size": "{{user `disk_size`}}",
+      "guest_os_type": "OpenSUSE_64",
+      "guest_additions_path": "VBoxGuestAdditions.iso",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "{{user `memory`}}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "{{user `cpus`}}"
+        ]
+      ],
+      "boot_command": [
+        "<esc><enter><wait>",
+        "linux netdevice=eth0 net.ifnames=0 netsetup=dhcp<wait>",
+        " install=http://download.opensuse.org/distribution/{{ user `opensuse_ver`}}/repo/oss/ insecure=1<wait>",
+        " lang=en_US autoyast=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{user `autoyastfile_vbox`}}<wait>",
+        " textmode=1<wait>",
+        "<enter><wait>"
+      ],
+      "boot_wait": "15s",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "40m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_key_path": "files/vagrant",
+      "shutdown_command": "echo '{{user `password`}}'|sudo -S /sbin/shutdown -P now",
+      "output_directory": "builds/opensuse13"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+        "scripts": [
+          "scripts/opensuse_vagrant.sh",
+          "scripts/install-virtualbox-guest-additions.sh",
+          "scripts/opensuse_network.sh",
+          "scripts/zerodisk.sh"          
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "output": "output/opensuse{{ user `opensuse_ver`}}-x86_64-{{ .Provider }}.box",
+      "keep_input_artifact": false
+    }
+  ]
+}
