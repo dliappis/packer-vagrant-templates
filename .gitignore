@@ -1,0 +1,5 @@
+builds/
+output/
+packer_cache/
+*.iso
+*~
