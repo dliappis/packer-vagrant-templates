@@ -1,0 +1,17 @@
+autoconf
+automake
+curl
+wget
+git
+htop
+pv
+man
+sysstat
+tmux
+traceroute
+xfsprogs
+zip
+zsh
+python-pip
+whois
+vim

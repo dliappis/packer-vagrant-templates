@@ -1,5 +1,6 @@
 #!/bin/sh
 
+rm /etc/udev/rules.d/70-persistent-net.rules
 rm -rf /dev/.udev/
 
 # Disable DNS reverse lookup
@@ -17,8 +18,8 @@ ln -s /sbin/shutdown /usr/bin/shutdown
 # ntp servers
 printf "%b" "
 # added by packer postinstall.sh
-server 0.de.pool.ntp.org
-server 1.de.pool.ntp.org
-server 2.de.pool.ntp.org
-server 3.de.pool.ntp.org
+server 0.pool.ntp.org
+server 1.pool.ntp.org
+server 2.pool.ntp.org
+server 3.pool.ntp.org
 " >> /etc/ntp.conf

@@ -47,7 +47,7 @@
       "ssh_password": "vagrant",
       "ssh_key_path": "files/vagrant",
       "shutdown_command": "echo '{{user `password`}}'|sudo -S /sbin/shutdown -P now",
-      "output_directory": "builds/opensuse13"
+      "output_directory": "builds/{{ user `opensuse_ver`}}"
     },
     {
       "type": "virtualbox-iso",
@@ -88,18 +88,25 @@
       "ssh_password": "vagrant",
       "ssh_key_path": "files/vagrant",
       "shutdown_command": "echo '{{user `password`}}'|sudo -S /sbin/shutdown -P now",
-      "output_directory": "builds/opensuse13"
+      "output_directory": "builds/{{ user `opensuse_ver`}}"
     }
   ],
   "provisioners": [
     {
+      "type": "file",
+      "source": "scripts/packagelist.txt",
+      "destination": "/tmp/packagelist.txt"
+    },
+    {
       "type": "shell",
       "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-        "scripts": [
-          "scripts/opensuse_vagrant.sh",
-          "scripts/install-virtualbox-guest-additions.sh",
-          "scripts/opensuse_network.sh",
-          "scripts/zerodisk.sh"          
+      "scripts": [
+        "scripts/opensuse_vagrant.sh",
+        "scripts/install_virtualbox_guest_additions.sh",
+        "scripts/opensuse_network.sh",
+        "scripts/opensuse_installpackagelist.sh",
+        "scripts/setlocaltime_toUTC.sh",
+        "scripts/zerodisk.sh"          
       ]
     }
   ],
